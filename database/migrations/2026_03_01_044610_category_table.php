@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('category', function (Blueprint $table){
-            $table-> id();
-            $table-> string('name');
-            $table-> foreignId('product_id')->constrained('product')->cascadeOnDelete();
-            $table-> timestamps();
+        // use plural table name to match Laravel conventions
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('category');
+        Schema::dropIfExists('categories');
     }
 };

@@ -13,3 +13,7 @@
 ## web.php
 
 ![web](ss/2/web-php.png)
+
+## about
+
+![about](ss/2/about.png)
