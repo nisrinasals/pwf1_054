@@ -67,6 +67,7 @@
                             </div>
                         </div>
 
+                        @if ($isAdmin)
                         <div>
                             <label for="user_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Owner <span class="text-red-500">*</span>
@@ -105,6 +106,7 @@
                                 <p class="mt-1.5 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
+                        @endif
 
                         <div class="flex items-center justify-between pt-2">
                             <button type="submit"

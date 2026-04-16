@@ -22,21 +22,34 @@ class ProductController extends Controller
 
     public function create()
     {
-        $users = User::orderBy('name')->get();
-        $categories = Category::orderBy('name')->get();
+        $isAdmin = auth()->user()->role === 'admin';
+        $users = $isAdmin ? User::orderBy('name')->get() : collect();
+        $categories = $isAdmin ? Category::orderBy('name')->get() : collect();
 
-        return view('product.create', compact('users', 'categories'));
+        return view('product.create', compact('users', 'categories', 'isAdmin'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'quantity' => 'required|integer',
-            'price' => 'required|numeric',
-            'user_id' => 'required|exists:users,id',
-            'category_id' => 'required|exists:categories,id',
-        ]);
+        $isAdmin = auth()->user()->role === 'admin';
+
+        if ($isAdmin) {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'quantity' => 'required|integer',
+                'price' => 'required|numeric',
+                'user_id' => 'required|exists:users,id',
+                'category_id' => 'required|exists:categories,id',
+            ]);
+        } else {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'quantity' => 'required|integer',
+                'price' => 'required|numeric',
+            ]);
+            $validated['user_id'] = auth()->id();
+            $validated['category_id'] = Category::firstOrCreate(['name' => 'Uncategorized'])->id;
+        }
 
         Product::create($validated);
 
@@ -53,10 +66,11 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        $users = User::orderBy('name')->get();
-        $categories = Category::all(); 
+        $isAdmin = auth()->user()->role === 'admin';
+        $users = $isAdmin ? User::orderBy('name')->get() : collect();
+        $categories = $isAdmin ? Category::all() : collect();
 
-        return view('product.edit', compact('product', 'users', 'categories'));
+        return view('product.edit', compact('product', 'users', 'categories', 'isAdmin'));
     }
 
     public function update(Request $request, $id)
@@ -66,13 +80,25 @@ class ProductController extends Controller
         // Minta izin ke Policy
         Gate::authorize('update', $product);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'quantity' => 'required|integer',
-            'price' => 'required|numeric',
-            'user_id' => 'required|exists:users,id',
-            'category_id' => 'required|exists:categories,id',
-        ]);
+        $isAdmin = auth()->user()->role === 'admin';
+
+        if ($isAdmin) {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'quantity' => 'required|integer',
+                'price' => 'required|numeric',
+                'user_id' => 'required|exists:users,id',
+                'category_id' => 'required|exists:categories,id',
+            ]);
+        } else {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'quantity' => 'required|integer',
+                'price' => 'required|numeric',
+            ]);
+            $validated['user_id'] = $product->user_id;
+            $validated['category_id'] = $product->category_id;
+        }
 
         $product->update($validated);
 

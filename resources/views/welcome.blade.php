@@ -56,7 +56,7 @@
                     <div class="flex justify-between items-end border-t border-white/5 pt-8">
                         <div>
                             <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-[#A1A09A] mb-1 block">NIM Mahasiswa</span>
-                            <p class="text-xl font-mono tracking-widest text-white">20230140088</p>
+                            <p class="text-xl font-mono tracking-widest text-white">20230140054</p>
                         </div>
                         
                         <div class="w-14 h-14 flex items-center justify-center bg-brand/10 rounded-xl border border-brand/20 shadow-[0_0_15px_rgba(245,48,3,0.2)]"> <svg class="w-8 h-8 text-brand" viewBox="0 0 24 24" fill="currentColor">
