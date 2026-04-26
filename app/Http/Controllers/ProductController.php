@@ -24,7 +24,7 @@ class ProductController extends Controller
     {
         $isAdmin = auth()->user()->role === 'admin';
         $users = $isAdmin ? User::orderBy('name')->get() : collect();
-        $categories = $isAdmin ? Category::orderBy('name')->get() : collect();
+        $categories = Category::orderBy('name')->get();
 
         return view('product.create', compact('users', 'categories', 'isAdmin'));
     }
@@ -46,9 +46,9 @@ class ProductController extends Controller
                 'name' => 'required|string|max:255',
                 'quantity' => 'required|integer',
                 'price' => 'required|numeric',
+                'category_id' => 'required|exists:categories,id',
             ]);
             $validated['user_id'] = auth()->id();
-            $validated['category_id'] = Category::firstOrCreate(['name' => 'Uncategorized'])->id;
         }
 
         Product::create($validated);
@@ -68,7 +68,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $isAdmin = auth()->user()->role === 'admin';
         $users = $isAdmin ? User::orderBy('name')->get() : collect();
-        $categories = $isAdmin ? Category::all() : collect();
+        $categories = Category::orderBy('name')->get();
 
         return view('product.edit', compact('product', 'users', 'categories', 'isAdmin'));
     }
@@ -77,7 +77,6 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // Minta izin ke Policy
         Gate::authorize('update', $product);
 
         $isAdmin = auth()->user()->role === 'admin';
@@ -95,9 +94,9 @@ class ProductController extends Controller
                 'name' => 'required|string|max:255',
                 'quantity' => 'required|integer',
                 'price' => 'required|numeric',
+                'category_id' => 'required|exists:categories,id',
             ]);
             $validated['user_id'] = $product->user_id;
-            $validated['category_id'] = $product->category_id;
         }
 
         $product->update($validated);
